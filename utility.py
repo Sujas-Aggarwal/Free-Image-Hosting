@@ -1,6 +1,7 @@
 from requests import get
 from bs4 import BeautifulSoup
 from addons import Addons
+from pathlib import Path
 class ImageDownloaderFromURL:
     def GetSourceCode(url):
         try:
@@ -29,15 +30,16 @@ class ImageDownloaderFromURL:
         print(f"Converted {indirect_link} to {direct_link}")
         return direct_link
 
-    def DownloadImage(image_link, image_name = 'output/image.jpg'):
+    def DownloadImage(image_link, image_name = 'image.jpg'):
         image = get(image_link)
+        file_name = ("image" if image_name==None else image_name) +"."+ image_link.split('.')[-1]
         try:
             assert image.status_code == 200
         except AssertionError:
             print('Image not found!')
             return
         try:
-            with open(image_name, 'wb') as file:
+            with open(Path("output/"+file_name), 'wb') as file:
                 file.write(image.content)
         except Exception as e:
             print('Error in saving image!')
@@ -53,7 +55,7 @@ class ImageDownloaderFromURL:
             return
         try:
             if direct_link:
-                ImageDownloaderFromURL.DownloadImage(image_link, image_name)
+                ImageDownloaderFromURL.DownloadImage(direct_link, image_name)
             else:
                 image_link = ImageDownloaderFromURL.GetDirectLink(indirect_link)
                 ImageDownloaderFromURL.DownloadImage(image_link, image_name)
