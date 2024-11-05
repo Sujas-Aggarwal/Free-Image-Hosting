@@ -1,5 +1,4 @@
-from requests import get
-from bs4 import BeautifulSoup
+from requests import get,post
 from addons import Addons
 from pathlib import Path
 class ImageDownloaderFromURL:
@@ -62,3 +61,15 @@ class ImageDownloaderFromURL:
         except:
             return
         print('Image downloaded successfully!')
+    def UploadImage(image_path:str):
+        supported_formats = ["jpg","jpeg","webp","png","heic","gif"]
+        assert Path(image_path).exists()
+        image = open(image_path, 'rb')
+        image_name = image_path.split("/")[-1]
+        assert image_name.split(".")[-1] in supported_formats
+        try:
+            response = Addons.UploadImageOnPostImg(image,image_name=image_name)
+            print(response)
+        except Exception as e:
+            print("Error Uploading Image")
+            print(e)

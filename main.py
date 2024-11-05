@@ -6,4 +6,5 @@ if __name__=="__main__":
     parser.add_argument('--direct_link', '--dl', type=str, help='Direct link to the image')
     parser.add_argument('--image_name', '--in', type=str, help='Name of the image to be saved')
     args = parser.parse_args()
-    ImageDownloaderFromURL.ScrapeImageFromLink(direct_link=args.direct_link, indirect_link=args.indirect_link,image_name= args.image_name)
+    # ImageDownloaderFromURL.ScrapeImageFromLink(direct_link=args.direct_link, indirect_link=args.indirect_link,image_name= args.image_name)
+    ImageDownloaderFromURL.UploadImage("input/IMG20240813225308.jpg")
