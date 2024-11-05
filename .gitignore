@@ -2,5 +2,7 @@
 __pycache__
 input/*
 output/*
+!input/.gitkeep
+!output/.gitkeep
 /__pycache__
 *.pyc
