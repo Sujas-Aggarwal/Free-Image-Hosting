@@ -1,6 +1,6 @@
 from requests import get
 from src.addons import Addons
-from pathlib import Path
+import os
 class FreeImageHoster:
     def GetSourceCode(url):
         try:
@@ -31,34 +31,34 @@ class FreeImageHoster:
         print(f"Converted {indirect_link} to {direct_link}")
         return direct_link
 
-    def _DownloadImage(image_link, image_name = 'image'):
+    def _DownloadImage(image_link, image_name = '',save_path = "output/"):
         image = get(image_link)
         while image.headers.get('content-type').find('image')==-1:
             image_link = FreeImageHoster.GetDirectLink(image_link)
             image = get(image_link)
-        file_name = image_name + "."+image_link.split(".")[-1] if image_name else image_link.split("/")[-1]
+        file_name = image_name + "."+image_link.split(".")[-1] if image_name!='' else image_link.split("/")[-1]
         try:
             assert image.status_code == 200
         except AssertionError:
             print('Image not found!')
             return
         try:
-            with open(Path("output/"+file_name), 'wb') as file:
+            with open(os.path.join(save_path,file_name), 'wb') as file:
                 file.write(image.content)
         except Exception as e:
             print(e)
             return
-    def ScrapeImageFromLink(link="", image_name = 'image'):
+    def ScrapeImageFromLink(link="", image_name = '',save_path = "output/"):
         try:
             image_link = FreeImageHoster.GetDirectLink(link)
-            FreeImageHoster._DownloadImage(image_link, image_name)
+            FreeImageHoster._DownloadImage(image_link, image_name,save_path=save_path)
         except Exception as e:
             print(e)
             print("Unable to Download Image")
             return
         print('Image downloaded successfully!')
     def UploadImage(image_path:str):
-        assert Path(image_path).exists()
+        assert os.path.exists(image_path),"Path does not exist"
         image = open(image_path, 'rb')
         image_name = image_path.split("/")[-1]
         assert image_name.split(".")[-1] in Addons.supported_formats
