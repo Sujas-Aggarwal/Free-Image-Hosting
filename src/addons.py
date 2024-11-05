@@ -36,7 +36,7 @@ class Addons:
             source_code_soup = BeautifulSoup(source_code, 'html.parser')
             direct_link = source_code_soup.find("img",id="main-image")['src']
         except Exception as e:
-            print('Error in getting direct link!')
+            print('ERROR: Error in getting direct link!')
             print(e)
             return
         return direct_link
@@ -52,13 +52,12 @@ class Addons:
                 return
         try:
             source_code_soup = BeautifulSoup(source_code, 'html.parser')
-            print(source_code_soup.prettify())
             all_images = source_code_soup.findAll("img")
             for image in all_images:
                 if image['class']=="image-placeholder" and image['src'].find("i.imgur.com")!=-1:
                     return image['src']
         except Exception as e:
-            print('Error in getting direct link!')
+            print('ERROR: Error in getting direct link!')
             print(e)
             return
     def UploadImageOnPostImg(image,image_name):
@@ -95,7 +94,8 @@ class Addons:
         try:
             response = get(link)
         except Exception as e:
-            print(e,"Unable to Fetch Response")
+            print(e)
+            print("ERROR:Unable to Fetch Response")
         response_type = response.headers.get("Content-Type")
         if response_type==None:
             return False

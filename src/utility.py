@@ -21,14 +21,14 @@ class FreeImageHoster:
             else:
                 direct_link = Addons.GetGeneralDirectLink(indirect_link)
         except Exception as  e:
-            print('Error in getting direct link!')
+            print('ERROR: Error in getting direct link!')
             print(e)
             return
         try:
             assert direct_link!=indirect_link and direct_link!=None
         except AssertionError:
             return
-        print(f"Converted {indirect_link} to {direct_link}")
+        print(f"INFO: Converted {indirect_link} to {direct_link}")
         return direct_link
 
     def _DownloadImage(image_link, image_name = '',save_path = "output/"):
@@ -40,7 +40,7 @@ class FreeImageHoster:
         try:
             assert image.status_code == 200
         except AssertionError:
-            print('Image not found!')
+            print('ERROR: Image not found!')
             return
         try:
             with open(os.path.join(save_path,file_name), 'wb') as file:
@@ -54,9 +54,8 @@ class FreeImageHoster:
             FreeImageHoster._DownloadImage(image_link, image_name,save_path=save_path)
         except Exception as e:
             print(e)
-            print("Unable to Download Image")
+            print("ERROR: Unable to Download Image")
             return
-        print('Image downloaded successfully!')
     def UploadImage(image_path:str):
         assert os.path.exists(image_path),"Path does not exist"
         image = open(image_path, 'rb')
@@ -67,5 +66,5 @@ class FreeImageHoster:
             response = Addons.UploadImageOnFreeHost(image,image_name=image_name)
             return response
         except Exception as e:
-            print("Error Uploading Image")
+            print("ERROR: Error Uploading Image")
             print(e)

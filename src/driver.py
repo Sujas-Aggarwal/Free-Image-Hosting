@@ -9,8 +9,7 @@ class Driver:
             try:
                 link = FreeImageHoster.UploadImage(image_path = image)
                 storage.append(link+"\n")
-                print("SUCCESS: File Uploaded Successfully as",image,end="")
-                print(" to link ",link)
+                print("SUCCESS: File Uploaded Successfully to",link)
             except Exception as e:
                 print(e)
                 print("ERROR: File Upload Unsuccessfull for",image)
