@@ -11,7 +11,8 @@ class FreeImageHoster:
         return response.text
     
     def GetDirectLink(indirect_link):
-        direct_link = indirect_link
+        if Addons.IsLinkDirect(indirect_link):
+            return indirect_link
         try:
             if indirect_link.find("postimg.cc")!=-1:
                 direct_link = Addons.GetDirectLinkFromPostImg(indirect_link)
@@ -32,6 +33,9 @@ class FreeImageHoster:
 
     def _DownloadImage(image_link, image_name = 'image'):
         image = get(image_link)
+        while image.headers.get('content-type').find('image')==-1:
+            image_link = FreeImageHoster.GetDirectLink(image_link)
+            image = get(image_link)
         file_name = image_name + "."+image_link.split(".")[-1] if image_name else image_link.split("/")[-1]
         try:
             assert image.status_code == 200
@@ -49,6 +53,7 @@ class FreeImageHoster:
             image_link = FreeImageHoster.GetDirectLink(link)
             FreeImageHoster._DownloadImage(image_link, image_name)
         except Exception as e:
+            print(e)
             print("Unable to Download Image")
             return
         print('Image downloaded successfully!')
@@ -58,7 +63,8 @@ class FreeImageHoster:
         image_name = image_path.split("/")[-1]
         assert image_name.split(".")[-1] in Addons.supported_formats
         try:
-            response = Addons.UploadImageOnPostImg(image,image_name=image_name)
+            # response = Addons.UploadImageOnPostImg(image,image_name=image_name)
+            response = Addons.UploadImageOnFreeHost(image,image_name=image_name)
             return response
         except Exception as e:
             print("Error Uploading Image")

@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import secrets
 from requests import get,post
+from src.config import Config
 class Addons:
     supported_formats = ["jpg","jpeg","webp","png","heic","gif"]
     def GetSourceCode(url):
@@ -101,3 +102,19 @@ class Addons:
         if response_type.split("/")[0]=="image":
             return True
         return False
+    def UploadImageOnFreeHost(image,image_name):
+        url = "https://freeimage.host/api/1/upload"
+        payload = {'key': Config.API_KEYS["FREEIMAGEHOST_API_KEY"]}
+        files=[
+        ('source',(image_name,image,f'image/{image_name.split(".")[-1]}'))
+        ]
+        headers = {
+        'Accept': 'application/json'
+        }
+        try:
+            response = post(url, headers=headers, data=payload, files=files)
+            response = response.json()
+        except Exception as e:
+            print(e)
+            return
+        return response['image']['url']
