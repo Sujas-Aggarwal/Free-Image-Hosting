@@ -1,5 +1,5 @@
-from requests import get,post
-from addons import Addons
+from requests import get
+from src.addons import Addons
 from pathlib import Path
 class FreeImageHoster:
     def GetSourceCode(url):
@@ -30,7 +30,7 @@ class FreeImageHoster:
         print(f"Converted {indirect_link} to {direct_link}")
         return direct_link
 
-    def DownloadImage(image_link, image_name = 'image'):
+    def _DownloadImage(image_link, image_name = 'image'):
         image = get(image_link)
         file_name = image_name + "."+image_link.split(".")[-1] if image_name else image_link.split("/")[-1]
         try:
@@ -44,11 +44,10 @@ class FreeImageHoster:
         except Exception as e:
             print(e)
             return
-
-    def ScrapeImageFromLink(link="", image_name = 'output/image.jpg'):
+    def ScrapeImageFromLink(link="", image_name = 'image'):
         try:
             image_link = FreeImageHoster.GetDirectLink(link)
-            FreeImageHoster.DownloadImage(image_link, image_name)
+            FreeImageHoster._DownloadImage(image_link, image_name)
         except Exception as e:
             print("Unable to Download Image")
             return
@@ -60,7 +59,7 @@ class FreeImageHoster:
         assert image_name.split(".")[-1] in Addons.supported_formats
         try:
             response = Addons.UploadImageOnPostImg(image,image_name=image_name)
-            print(response)
+            return response
         except Exception as e:
             print("Error Uploading Image")
             print(e)

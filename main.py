@@ -5,4 +5,4 @@ if __name__=="__main__":
     parser.add_argument('-link', '-l', type=str, help='Indirect link to the image')
     parser.add_argument('-image', '-i', type=str, help='Name of the image to be saved')
     args = parser.parse_args()
-    FreeImageHoster.UploadImage(args.image)
+    FreeImageHoster.ScrapeImageFromLink(link=args.link,image_name=args.image)

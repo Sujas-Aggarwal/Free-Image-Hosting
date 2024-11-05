@@ -87,7 +87,8 @@ class Addons:
         # Since PostImg does not directly provide the indirect link but provide the indirect indirect link, we need to use a different method of direct link finding
         source_code = Addons.GetSourceCode(response['url'])
         source_code_soup = BeautifulSoup(source_code,"html.parser")
-        direct_link = source_code_soup.find("input",id="code_direct")['value']
+        direct_link = source_code_soup.find("input",id="code_html")['value']
+        direct_link = Addons.GetDirectLinkFromPostImg(direct_link)
         return direct_link
     def IsLinkDirect(link):
         try:
