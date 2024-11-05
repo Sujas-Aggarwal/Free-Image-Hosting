@@ -1,7 +1,7 @@
 from requests import get,post
 from addons import Addons
 from pathlib import Path
-class ImageDownloaderFromURL:
+class FreeImageHoster:
     def GetSourceCode(url):
         try:
             response = get(url)
@@ -15,6 +15,8 @@ class ImageDownloaderFromURL:
         try:
             if indirect_link.find("postimg.cc")!=-1:
                 direct_link = Addons.GetDirectLinkFromPostImg(indirect_link)
+            elif indirect_link.find("imgur.com")!=-1:
+                direct_link = Addons.GetDirectLinkFromImgur(indirect_link)
             else:
                 direct_link = Addons.GetGeneralDirectLink(indirect_link)
         except Exception as  e:
@@ -22,9 +24,8 @@ class ImageDownloaderFromURL:
             print(e)
             return
         try:
-            assert direct_link!=indirect_link
+            assert direct_link!=indirect_link and direct_link!=None
         except AssertionError:
-            print('Direct link not found for given indirect url!')
             return
         print(f"Converted {indirect_link} to {direct_link}")
         return direct_link
@@ -41,32 +42,22 @@ class ImageDownloaderFromURL:
             with open(Path("output/"+file_name), 'wb') as file:
                 file.write(image.content)
         except Exception as e:
-            print('Error in saving image!')
             print(e)
             return
-        
 
-    def ScrapeImageFromLink(indirect_link="",direct_link="", image_name = 'output/image.jpg'):
+    def ScrapeImageFromLink(link="", image_name = 'output/image.jpg'):
         try:
-            assert indirect_link or direct_link
-        except AssertionError:
-            print('Please provide either indirect_link or direct_link')
-            return
-        try:
-            if direct_link:
-                ImageDownloaderFromURL.DownloadImage(direct_link, image_name)
-            else:
-                image_link = ImageDownloaderFromURL.GetDirectLink(indirect_link)
-                ImageDownloaderFromURL.DownloadImage(image_link, image_name)
-        except:
+            image_link = FreeImageHoster.GetDirectLink(link)
+            FreeImageHoster.DownloadImage(image_link, image_name)
+        except Exception as e:
+            print("Unable to Download Image")
             return
         print('Image downloaded successfully!')
     def UploadImage(image_path:str):
-        supported_formats = ["jpg","jpeg","webp","png","heic","gif"]
         assert Path(image_path).exists()
         image = open(image_path, 'rb')
         image_name = image_path.split("/")[-1]
-        assert image_name.split(".")[-1] in supported_formats
+        assert image_name.split(".")[-1] in Addons.supported_formats
         try:
             response = Addons.UploadImageOnPostImg(image,image_name=image_name)
             print(response)
