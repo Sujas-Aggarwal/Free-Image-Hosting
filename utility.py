@@ -30,9 +30,9 @@ class FreeImageHoster:
         print(f"Converted {indirect_link} to {direct_link}")
         return direct_link
 
-    def DownloadImage(image_link, image_name = 'image.jpg'):
+    def DownloadImage(image_link, image_name = 'image'):
         image = get(image_link)
-        file_name = ("image" if image_name==None else image_name) +"."+ image_link.split('.')[-1]
+        file_name = image_name + "."+image_link.split(".")[-1] if image_name else image_link.split("/")[-1]
         try:
             assert image.status_code == 200
         except AssertionError:

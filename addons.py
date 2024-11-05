@@ -5,7 +5,7 @@ class Addons:
     supported_formats = ["jpg","jpeg","webp","png","heic","gif"]
     def GetSourceCode(url):
         try:
-            response = get(url)
+            response = get(url,allow_redirects=True)
         except Exception as e:
             print(e)
             return
@@ -22,7 +22,7 @@ class Addons:
         direct_link = source_code_soup.find("img")['src']
         return direct_link
     def GetDirectLinkFromPostImg(indirect_link:str="",source_code:str=""):
-        if Addons.IsLinkDirect(indirect_link):
+        if indirect_link and Addons.IsLinkDirect(indirect_link):
             return indirect_link
         assert indirect_link or source_code
         if indirect_link:
@@ -40,7 +40,7 @@ class Addons:
             return
         return direct_link
     def GetDirectLinkFromImgur(indirect_link:str="",source_code:str=""):
-        if Addons.IsLinkDirect(indirect_link):
+        if indirect_link and Addons.IsLinkDirect(indirect_link):
             return indirect_link
         assert indirect_link or source_code
         if indirect_link:
@@ -95,6 +95,8 @@ class Addons:
         except Exception as e:
             print(e,"Unable to Fetch Response")
         response_type = response.headers.get("Content-Type")
+        if response_type==None:
+            return False
         if response_type.split("/")[0]=="image":
             return True
         return False
