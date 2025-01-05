@@ -1,7 +1,7 @@
 # Image Hosting Tool
 
-Wish to avoid costs from storage software including Google drive or Dropbox?
-Save all your memories on cloud for free without any subscription or premium charges
+Do you wish to avoid costs from storage software including Google Drive or Dropbox?
+Save all your memories on the cloud for free without any subscription or premium charges
 
 Installation:
 ```
@@ -13,13 +13,13 @@ pip install -r requirements.txt
 
 
 Usage:
-Run the main script
-python main.py
+Run the main script:
+` python main.py `
 
-Here you have a few options using an image url
+Here you have a few options using an image URL
 ```
-1. To download image from URL, use 'download'
-2. To upload image from path, use 'upload'
+1. To download an image from the URL, use 'download'
+2. To upload an image from the path, use 'upload'
 3. To convert links from indirect to direct, use 'convert'
 4. To exit, use 'exit'
 5. To restart, use 'restart'
