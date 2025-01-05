@@ -1,4 +1,10 @@
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from the .env file
+load_dotenv()
+
 class Config:
     API_KEYS = {
-        "FREEIMAGEHOST_API_KEY" : "6d207e02198a847aa98d0a2a901485a5"
+        "FREEIMAGEHOST_API_KEY": os.getenv("FREEIMAGEHOST_API_KEY")
     }
