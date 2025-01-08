@@ -1,3 +1,6 @@
+# Download the latest release here -
+[v1.0.0](https://github.com/Sujas-Aggarwal/Free-Image-Hosting/releases/download/release/FreeImageHosting.exe)
+
 # Image Hosting Tool
 
 Do you wish to avoid costs from storage software including Google Drive or Dropbox?
