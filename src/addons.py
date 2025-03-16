@@ -60,61 +60,66 @@ class Addons:
             print('ERROR: Error in getting direct link!')
             print(e)
             return
-    def UploadImageOnPostImg(image,image_name):
-        SESSION_ID = secrets.randbits(64) 
-        image_extension = image_name.split(".")[-1]
-        url = "https://postimages.org/json/rr"
-        payload = {'optsize': '0',
-        'expire': '0',
-        'numfiles': '1',
-        'upload_session':SESSION_ID,
-        'gallery': ''}
-        files=[
-        ('file',(image_name,image,f'image/{image_extension}'))
-        ]
-        headers = {
-        'Cache-Control': 'no-cache',
-        'Referer': 'https://postimages.org/',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json'
-        }
 
-        try:
-            response = post(url, headers=headers, data=payload, files=files)
-            response = response.json()
-        except Exception as e:
-            return            
-        # Since PostImg does not directly provide the indirect link but provide the indirect indirect link, we need to use a different method of direct link finding
-        source_code = Addons.GetSourceCode(response['url'])
-        source_code_soup = BeautifulSoup(source_code,"html.parser")
-        direct_link = source_code_soup.find("input",id="code_html")['value']
-        direct_link = Addons.GetDirectLinkFromPostImg(direct_link)
-        return direct_link
-    def IsLinkDirect(link):
-        try:
-            response = get(link)
-        except Exception as e:
-            print(e)
-            print("ERROR:Unable to Fetch Response")
-        response_type = response.headers.get("Content-Type")
-        if response_type==None:
-            return False
-        if response_type.split("/")[0]=="image":
-            return True
-        return False
-    def UploadImageOnFreeHost(image,image_name):
+    def UploadImageOnFreeHost(image, image_name):
+        """
+        Upload an image to freeimage.host and return the direct URL.
+        
+        Args:
+            image: Either file content (bytes) or a path to the image file (str)
+            image_name: Name of the image file with extension
+        
+        Returns:
+            str: Direct URL to the uploaded image or None if upload fails
+        """
         url = "https://freeimage.host/api/1/upload"
         payload = {'key': Config.API_KEYS["FREEIMAGEHOST_API_KEY"]}
-        files=[
-        ('source',(image_name,image,f'image/{image_name.split(".")[-1]}'))
+        
+        # Determine if image is a path (string) or file content (bytes)
+        if isinstance(image, str):
+            # Convert relative path to absolute path
+            image_path = os.path.abspath(image)
+            if not os.path.exists(image_path):
+                print(f"ERROR: File not found at {image_path}")
+                return None
+                
+            try:
+                with open(image_path, 'rb') as f:
+                    image_content = f.read()
+            except Exception as e:
+                print(f"ERROR: Unable to read file - {e}")
+                return None
+        else:
+            # Assume image is already file content (bytes)
+            image_content = image
+        
+        # Get the file extension from image_name
+        image_extension = image_name.split(".")[-1]
+        mime_type = f'image/{image_extension}'
+        
+        files = [
+            ('source', (image_name, image_content, mime_type))
         ]
         headers = {
-        'Accept': 'application/json'
+            'Accept': 'application/json'
         }
+        
         try:
             response = post(url, headers=headers, data=payload, files=files)
-            response = response.json()
+            response.raise_for_status()  # Raise an exception for bad status codes
+            response_json = response.json()
+            return response_json['image']['url']
         except Exception as e:
-            print(e)
-            return
-        return response['image']['url']
+            print(f"ERROR: Upload failed - {e}")
+            return None
+
+    # Example usage:
+    # With absolute path:
+    # url = UploadImageOnFreeHost("/home/user/images/test.jpg", "test.jpg")
+
+    # With relative path:
+    # url = UploadImageOnFreeHost("../images/test.png", "test.png")
+
+    # With file content:
+    # with open("test.jpg", "rb") as f:
+    #     url = UploadImageOnFreeHost(f.read(), "test.jpg")
